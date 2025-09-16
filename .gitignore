@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+*.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Logs & Outputs
+logs/
+*.log
+*.out
+*.err
+
+# Datasets & Large files
+data/
+dataset/
+*.csv
+*.tsv
+*.json
+*.zip
+
+# HuggingFace cache
+~/.cache/huggingface/
+.cache/
+checkpoints/
+result_*/
+logs_*/
+
+# Model files
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnpm-debug.log*
+
+# System files
+.DS_Store
+Thumbs.db
