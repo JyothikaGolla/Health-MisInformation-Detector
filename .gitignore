@@ -25,13 +25,6 @@ logs/
 *.out
 *.err
 
-# Datasets & Large files
-data/
-dataset/
-*.csv
-*.tsv
-*.json
-*.zip
 
 # HuggingFace cache
 ~/.cache/huggingface/

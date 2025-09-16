@@ -1,0 +1,12 @@
+[
+  {
+    "postId": "0",
+    "userId": "u1",
+    "text": "Claim about turmeric curing cancer."
+  },
+  {
+    "postId": "1",
+    "userId": "u2",
+    "text": "Update on randomized vaccine trial."
+  }
+]
