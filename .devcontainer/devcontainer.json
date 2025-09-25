@@ -1,0 +1,19 @@
+{
+  "name": "health-misinfo-detector",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "postCreateCommand": "pip install -r api/requirements.txt && cd client && npm i",
+  "forwardPorts": [
+    8000,
+    5173
+  ],
+  "remoteUser": "root"
+}
