@@ -3,10 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "homepage": "https://jyothikagolla.github.io/Health-MisInformation-Detector/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --port 5173"
+    "preview": "vite preview --port 5173",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -21,6 +24,7 @@
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^5.0.2",
     "autoprefixer": "^10.4.21",
+    "gh-pages": "^6.3.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.4.5",
