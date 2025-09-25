@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "homepage": "https://jyothikagolla.github.io/Health-MisInformation-Detector/",
+  "homepage": "https://JyothikaGolla.github.io/Health-MisInformation-Detector/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
