@@ -3,7 +3,7 @@ uvicorn[standard]==0.30.6
 pydantic==2.8.2
 SQLAlchemy==2.0.32
 python-dotenv==1.0.1
-numpy==1.26.4
+numpy==2.0.0
 scikit-learn==1.4.2
 pandas==2.0.3
 tqdm==4.66.1
