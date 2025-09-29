@@ -201,12 +201,16 @@ def preprocess_text_for_inference(text, tokenizer, max_len=128):
 # -------------------------------
 # FastAPI Setup
 # -------------------------------
-app = FastAPI(title="Health Misinformation Detector")
+app = FastAPI(
+    title="Health Misinformation Detector",
+    description="AI-powered platform for detecting health misinformation using BioBERT, ARG, and GNN models",
+    version="1.0.0"
+)
 
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],  # Vite dev server
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "*"],  # Allow all origins for production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -214,7 +218,11 @@ app.add_middleware(
 
 class InferenceRequest(BaseModel):
     text: str
-    model_type: str = "BioBERT"  # Options: BioBERT, BioBERT_ARG, BioBERT_ARG_GNN
+    model_name: str = "BioBERT"  # Changed from model_type to avoid conflict
+    
+    class Config:
+        # Fix the Pydantic protected namespace warning
+        protected_namespaces = ()
 
 @app.on_event("startup")
 def load_resources():
@@ -241,12 +249,41 @@ def load_resources():
         models[model_name] = model
 
 
+@app.get("/")
+def root():
+    """Root endpoint with API information."""
+    return {
+        "message": "Health Misinformation Detector API",
+        "description": "AI-powered platform for detecting health misinformation",
+        "version": "1.0.0",
+        "endpoints": {
+            "predict": "/predict",
+            "health": "/health",
+            "docs": "/docs",
+            "openapi": "/openapi.json"
+        },
+        "models_available": list(models.keys()) if 'models' in globals() else [],
+        "status": "active"
+    }
+
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint for monitoring."""
+    return {
+        "status": "healthy",
+        "models_loaded": len(models) if 'models' in globals() else 0,
+        "device": str(device) if 'device' in globals() else "unknown"
+    }
+
+
 @app.post("/predict")
 def predict(req: InferenceRequest):
-    if req.model_type not in models:
-        return {"error": f"Model {req.model_type} not available"}
+    """Predict if a health claim is misinformation or reliable."""
+    if req.model_name not in models:
+        return {"error": f"Model {req.model_name} not available. Available models: {list(models.keys())}"}
 
-    model = models[req.model_type]
+    model = models[req.model_name]
     input_ids, attention_mask, edge_index, num_nodes, subtoken_to_word = preprocess_text_for_inference(
         req.text, tokenizer
     )
@@ -254,18 +291,31 @@ def predict(req: InferenceRequest):
     attention_mask = attention_mask.to(device)
 
     with torch.no_grad():
-        if req.model_type == "BioBERT":
+        if req.model_name == "BioBERT":
             logits = model(input_ids, attention_mask)
             probs = torch.softmax(logits, dim=1).cpu().tolist()
-            return {"probs": probs, "pred": int(torch.argmax(logits, dim=1).item())}
+            prediction = int(torch.argmax(logits, dim=1).item())
+            confidence = float(max(probs[0]))
+            return {
+                "prediction": prediction,
+                "confidence": confidence,
+                "label": "reliable" if prediction == 1 else "misinformation",
+                "probabilities": {"misinformation": probs[0][0], "reliable": probs[0][1]},
+                "model_used": req.model_name
+            }
 
-        elif req.model_type == "BioBERT_ARG":
+        elif req.model_name == "BioBERT_ARG":
             logits, rationale_scores = model(input_ids, attention_mask)
             probs = torch.softmax(logits, dim=1).cpu().tolist()
+            prediction = int(torch.argmax(logits, dim=1).item())
+            confidence = float(max(probs[0]))
             return {
-                "probs": probs,
-                "pred": int(torch.argmax(logits, dim=1).item()),
+                "prediction": prediction,
+                "confidence": confidence,
+                "label": "reliable" if prediction == 1 else "misinformation",
+                "probabilities": {"misinformation": probs[0][0], "reliable": probs[0][1]},
                 "rationales": rationale_scores.cpu().tolist(),
+                "model_used": req.model_name
             }
 
         else:  # BioBERT_ARG_GNN
@@ -276,8 +326,13 @@ def predict(req: InferenceRequest):
                 subtoken_to_word_list=[subtoken_to_word]
             )
             probs = torch.softmax(logits, dim=1).cpu().tolist()
+            prediction = int(torch.argmax(logits, dim=1).item())
+            confidence = float(max(probs[0]))
             return {
-                "probs": probs,
-                "pred": int(torch.argmax(logits, dim=1).item()),
+                "prediction": prediction,
+                "confidence": confidence,
+                "label": "reliable" if prediction == 1 else "misinformation",
+                "probabilities": {"misinformation": probs[0][0], "reliable": probs[0][1]},
                 "rationales": rationale_scores.cpu().tolist(),
+                "model_used": req.model_name
             }
