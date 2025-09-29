@@ -3,11 +3,18 @@ import React, { useState } from "react";
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import axios from "axios";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
+import { config } from "./config";
 
 interface PredictionResult {
-  probs: number[][];
-  pred: number;
+  prediction: number;
+  confidence: number;
+  label: string;
+  probabilities: {
+    misinformation: number;
+    reliable: number;
+  };
   rationales?: number[][];
+  model_used: string;
 }
 
 interface ModelResult {
@@ -54,15 +61,15 @@ const App: React.FC = () => {
     setCompareResult(null);
     
     try {
-      const response = await axios.post<PredictionResult>("http://127.0.0.1:8000/predict", {
+      const response = await axios.post<PredictionResult>(`${config.apiUrl}/predict`, {
         text: claim,
-        model_type: analyzeModel,
+        model_name: analyzeModel,
       });
       
       const result: ModelResult = {
         model: analyzeModel,
-        prediction: response.data.pred === 0 ? "Fake" : "Real",
-        confidence: Math.max(...response.data.probs[0]) * 100,
+        prediction: response.data.label === "reliable" ? "Real" : "Fake",
+        confidence: response.data.confidence * 100,
         rationales: response.data.rationales?.[0]
       };
       
@@ -83,9 +90,9 @@ const App: React.FC = () => {
     
     try {
       const promises = models.map(model => 
-        axios.post<PredictionResult>("http://127.0.0.1:8000/predict", {
+        axios.post<PredictionResult>(`${config.apiUrl}/predict`, {
           text: claim,
-          model_type: model,
+          model_name: model,
         })
       );
       
@@ -93,8 +100,8 @@ const App: React.FC = () => {
       
       const results: ModelResult[] = responses.map((response, index) => ({
         model: models[index],
-        prediction: response.data.pred === 0 ? "Fake" : "Real",
-        confidence: Math.max(...response.data.probs[0]) * 100,
+        prediction: response.data.label === "reliable" ? "Real" : "Fake",
+        confidence: response.data.confidence * 100,
         rationales: response.data.rationales?.[0]
       }));
       

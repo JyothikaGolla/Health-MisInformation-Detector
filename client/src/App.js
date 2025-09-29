@@ -4,6 +4,7 @@ import { useState } from "react";
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import axios from "axios";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { config } from "./config";
 const App = () => {
     const [claim, setClaim] = useState("");
     const [analyzeModel, setAnalyzeModel] = useState("BioBERT");
@@ -32,14 +33,14 @@ const App = () => {
         setSingleResult(null);
         setCompareResult(null);
         try {
-            const response = await axios.post("http://127.0.0.1:8000/predict", {
+            const response = await axios.post(`${config.apiUrl}/predict`, {
                 text: claim,
-                model_type: analyzeModel,
+                model_name: analyzeModel,
             });
             const result = {
                 model: analyzeModel,
-                prediction: response.data.pred === 0 ? "Fake" : "Real",
-                confidence: Math.max(...response.data.probs[0]) * 100,
+                prediction: response.data.label === "reliable" ? "Real" : "Fake",
+                confidence: response.data.confidence * 100,
                 rationales: response.data.rationales?.[0]
             };
             setSingleResult(result);
@@ -59,15 +60,15 @@ const App = () => {
         setSingleResult(null);
         setCompareResult(null);
         try {
-            const promises = models.map(model => axios.post("http://127.0.0.1:8000/predict", {
+            const promises = models.map(model => axios.post(`${config.apiUrl}/predict`, {
                 text: claim,
-                model_type: model,
+                model_name: model,
             }));
             const responses = await Promise.all(promises);
             const results = responses.map((response, index) => ({
                 model: models[index],
-                prediction: response.data.pred === 0 ? "Fake" : "Real",
-                confidence: Math.max(...response.data.probs[0]) * 100,
+                prediction: response.data.label === "reliable" ? "Real" : "Fake",
+                confidence: response.data.confidence * 100,
                 rationales: response.data.rationales?.[0]
             }));
             setCompareResult({
