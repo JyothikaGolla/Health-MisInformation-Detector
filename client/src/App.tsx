@@ -448,7 +448,7 @@ const App: React.FC = () => {
       </div>
       {/* Footer */}
       <footer className="mt-12 py-6 text-center text-gray-500 dark:text-gray-400 text-sm border-t border-gray-200 dark:border-gray-800">
-        <span>© {new Date().getFullYear()} Health Misinfo Detector. Built with React, Tailwind CSS, and FastAPI. | <a href="https://github.com/JyothikaGolla/Health-MisInfo-Detector" className="underline hover:text-indigo-600 dark:hover:text-indigo-300">GitHub</a></span>
+        <span>© {new Date().getFullYear()} Health Misinfo Detector. Built with React, Tailwind CSS, and FastAPI. | <a href="https://github.com/JyothikaGolla/Health-MisInformation-Detector" className="underline hover:text-indigo-600 dark:hover:text-indigo-300">GitHub</a></span>
       </footer>
     </div>
   );
