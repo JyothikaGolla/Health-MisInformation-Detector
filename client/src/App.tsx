@@ -1,6 +1,6 @@
 // App.tsx
 import React, { useState } from "react";
-import { SunIcon, MoonIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import axios from "axios";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 
@@ -24,7 +24,6 @@ interface CompareResult {
 
 const App: React.FC = () => {
   const [claim, setClaim] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
   const [analyzeModel, setAnalyzeModel] = useState("BioBERT");
   const [singleResult, setSingleResult] = useState<ModelResult | null>(null);
   const [compareResult, setCompareResult] = useState<CompareResult | null>(null);
@@ -41,6 +40,11 @@ const App: React.FC = () => {
     "Taking vitamin C supplements prevents the common cold completely",
     "Magic mushrooms can cure depression and anxiety disorders permanently"
   ];
+
+  // Helper function to format model names for display
+  const formatModelName = (modelName: string) => {
+    return modelName.replace(/_/g, "+");
+  };
 
   const handleAnalyze = async () => {
     if (!claim.trim()) return;
@@ -112,7 +116,7 @@ const App: React.FC = () => {
   const getChartData = () => {
     if (compareResult) {
       return compareResult.results.map(result => ({
-        model: result.model,
+        model: formatModelName(result.model),
         confidence: result.confidence.toFixed(1),
         prediction: result.prediction
       }));
@@ -121,49 +125,38 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className={
-      `${darkMode ? "dark bg-gradient-to-br from-gray-900 to-gray-800" : "bg-gradient-to-br from-blue-50 to-indigo-100"} min-h-screen transition-colors duration-300`
-    }>
+    <div className="dark bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen">
       {/* Sticky Header */}
-      <header className="sticky top-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800 shadow-sm flex items-center justify-between px-6 py-3">
+      <header className="sticky top-0 z-20 bg-gray-900/80 backdrop-blur border-b border-gray-800 shadow-sm flex items-center justify-between px-6 py-3">
         <div className="flex items-center gap-3">
-          <span className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">🔍 Health Misinfo Detector</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <button
-            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-            className="rounded-full p-2 hover:bg-indigo-100 dark:hover:bg-gray-700 transition"
-            onClick={() => setDarkMode((d) => !d)}
-          >
-            {darkMode ? <SunIcon className="h-6 w-6 text-yellow-400" /> : <MoonIcon className="h-6 w-6 text-gray-700" />}
-          </button>
+          <span className="text-2xl font-bold text-indigo-300">🔍 Health Misinfo Detector</span>
         </div>
       </header>
       <div className="max-w-6xl mx-auto px-2 sm:px-6">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-indigo-100 mb-4">
-            Analyze health claims using advanced AI models including BioBERT with Argument Mining and Graph Neural Networks
+        <div className="text-center mb-8 py-8">
+          <h1 className="text-4xl font-bold text-indigo-100 mb-6">
+            Analyze health claims using advanced AI models including BioBERT with Adaptive Rationale Guidance and Graph Neural Networks
           </h1>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 mt-4">
+          <div className="flex flex-col items-center justify-center gap-4">
             <div className="flex-shrink-0 flex items-center justify-center">
-              <InformationCircleIcon className="h-16 w-16 md:h-24 md:w-24 text-blue-400 dark:text-blue-300" />
+              <InformationCircleIcon className="h-16 w-16 md:h-24 md:w-24 text-blue-300" />
             </div>
-            <div className="max-w-md text-lg text-gray-600 dark:text-gray-300 text-left">
+            <div className="max-w-md text-lg text-gray-300 text-center">
               <span>Choose a claim and model to get started.<br />
-              <span className="text-sm text-gray-500 dark:text-gray-400">Results are AI predictions, not medical advice.</span></span>
+              <span className="text-sm text-gray-400">Results are AI predictions, not medical advice.</span></span>
             </div>
           </div>
         </div>
 
         {/* Sample Claims */}
-  <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Try Sample Health Claims:</h2>
+  <div className="bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">Try Sample Health Claims:</h2>
           <div className="flex flex-wrap gap-2">
             {sampleClaims.map((sampleClaim, index) => (
               <button
                 key={index}
-                className="text-left px-3 py-2 bg-gray-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-indigo-900 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-300 transition-all duration-200 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="text-left px-3 py-2 bg-gray-700 hover:bg-blue-800 rounded-lg border border-gray-600 hover:border-blue-500 transition-all duration-200 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-200"
                 onClick={() => handleSampleClaim(sampleClaim)}
                 tabIndex={0}
                 aria-label={`Try sample claim: ${sampleClaim}`}
@@ -175,11 +168,11 @@ const App: React.FC = () => {
         </div>
 
         {/* Input Section */}
-  <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Enter Health Claim:</h2>
+  <div className="bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">Enter Health Claim:</h2>
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center mt-2">
             <textarea
-              className="w-full p-4 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded-lg mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none shadow"
+              className="w-full p-4 border border-gray-600 bg-gray-700 text-white rounded-lg mb-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none shadow placeholder-gray-300"
               rows={4}
               placeholder="Enter a health claim to analyze (e.g., 'Vitamin C prevents COVID-19', 'Coffee causes cancer', etc.)..."
               value={claim}
@@ -187,7 +180,7 @@ const App: React.FC = () => {
               aria-label="Health claim input"
             />
             <button
-              className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg font-medium transition-colors duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 mb-2 shadow"
+              className="bg-gray-600 text-gray-200 px-4 py-2 rounded-lg font-medium transition-colors duration-200 hover:bg-gray-500 mb-2 shadow"
               onClick={() => setClaim("")}
               disabled={!claim.trim()}
               aria-label="Clear claim input"
@@ -196,23 +189,23 @@ const App: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             <div className="flex items-center gap-2 mt-2">
-              <label htmlFor="model-select" className="text-sm font-medium text-gray-700 dark:text-gray-200">
+              <label htmlFor="model-select" className="text-sm font-medium text-gray-200">
                 Model:
               </label>
               <select
                 id="model-select"
-                className="border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow"
+                className="border border-gray-600 bg-gray-700 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow"
                 value={analyzeModel}
                 onChange={(e) => setAnalyzeModel(e.target.value)}
                 aria-label="Model selection"
               >
                 {models.map((model) => (
                   <option key={model} value={model}>
-                    {model.replace(/_/g, " ")}
+                    {formatModelName(model)}
                   </option>
                 ))}
               </select>
-              <span className="ml-1" title="Select which AI model to use for analysis."><InformationCircleIcon className="h-4 w-4 text-blue-400 dark:text-blue-300" /></span>
+              <span className="ml-1" title="Select which AI model to use for analysis."><InformationCircleIcon className="h-4 w-4 text-blue-300" /></span>
             </div>
 
             <div className="flex gap-3">
@@ -259,53 +252,53 @@ const App: React.FC = () => {
 
         {/* Single Model Result */}
         {singleResult && (
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              📊 Analysis Result - {singleResult.model.replace(/_/g, " ")}
+          <div className="bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+            <h2 className="text-2xl font-semibold text-white mb-4">
+              📊 Analysis Result - {formatModelName(singleResult.model)}
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Prediction:</p>
+                <div className="p-4 bg-gray-700 rounded-lg border border-gray-600">
+                  <p className="text-sm font-medium text-gray-300 mb-1">Prediction:</p>
                   <p className={`text-2xl font-bold ${
-                    singleResult.prediction === "Real" ? "text-green-600" : "text-red-600"
+                    singleResult.prediction === "Real" ? "text-emerald-400" : "text-rose-400"
                   }`}>
                     {singleResult.prediction === "Real" ? "✅ Real" : "❌ Fake"}
                   </p>
                 </div>
                 
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Confidence:</p>
+                <div className="p-4 bg-gray-700 rounded-lg border border-gray-600">
+                  <p className="text-sm font-medium text-gray-300 mb-1">Confidence:</p>
                   <div className="flex items-center">
-                    <div className="flex-1 bg-gray-200 rounded-full h-3 mr-3">
+                    <div className="flex-1 bg-gray-600 rounded-full h-3 mr-3">
                       <div 
                         className={`h-3 rounded-full ${
-                          singleResult.confidence > 70 ? "bg-green-500" : 
-                          singleResult.confidence > 50 ? "bg-yellow-500" : "bg-red-500"
+                          singleResult.confidence > 70 ? "bg-emerald-500" : 
+                          singleResult.confidence > 50 ? "bg-amber-500" : "bg-rose-500"
                         }`}
                         style={{ width: `${singleResult.confidence}%` }}
                       ></div>
                     </div>
-                    <span className="text-lg font-bold">
+                    <span className="text-lg font-bold text-white">
                       {singleResult.confidence.toFixed(1)}%
                     </span>
                   </div>
                 </div>
               </div>
               
-              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">Input Claim:</p>
-                <p className="text-gray-800 dark:text-gray-100 italic">"{claim}"</p>
+              <div className="p-4 bg-gray-700 rounded-lg border border-gray-600">
+                <p className="text-sm font-medium text-gray-300 mb-2">Input Claim:</p>
+                <p className="text-gray-100 italic">"{claim}"</p>
               </div>
             </div>
             
             {singleResult.rationales && singleResult.rationales.length > 0 && (
-              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
-                <p className="text-sm font-medium text-blue-700 dark:text-blue-200 mb-2">
-                  🎯 Argument Rationales <span title="Words most important for the model's decision are highlighted."><InformationCircleIcon className="h-4 w-4 inline text-blue-400 dark:text-blue-300" /></span>
+              <div className="mt-6 p-4 bg-blue-900/30 border border-blue-700/50 rounded-lg">
+                <p className="text-sm font-medium text-blue-300 mb-2">
+                  🎯 Argument Rationales <span title="Words most important for the model's decision are highlighted."><InformationCircleIcon className="h-4 w-4 inline text-blue-400" /></span>
                 </p>
-                <p className="text-sm text-blue-600 dark:text-blue-200">
+                <p className="text-sm text-blue-200">
                   This model identified key argumentative elements in the text to make its prediction.
                   Higher rationale scores indicate more important words for the decision.
                 </p>
@@ -316,22 +309,22 @@ const App: React.FC = () => {
 
         {/* Compare Results */}
         {compareResult && (
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          <div className="bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+            <h2 className="text-2xl font-semibold text-white mb-6">
               ⚖️ Model Comparison Results
             </h2>
             
-            <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <p className="text-sm font-medium text-gray-600 mb-1">Analyzed Claim:</p>
-              <p className="text-gray-800 italic">"{compareResult.input}"</p>
+            <div className="mb-6 p-4 bg-gray-700 border border-gray-600 rounded-lg">
+              <p className="text-sm font-medium text-gray-300 mb-1">Analyzed Claim:</p>
+              <p className="text-gray-100 italic">"{compareResult.input}"</p>
             </div>
 
             {/* Chart Visualization */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Confidence Comparison</h3>
-              <div className="h-64">
+              <h3 className="text-lg font-semibold text-gray-200 mb-4">Confidence Comparison</h3>
+              <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={getChartData()}>
+                  <BarChart data={getChartData()} margin={{ top: 20, right: 30, left: 60, bottom: 80 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis 
                       dataKey="model" 
@@ -339,22 +332,22 @@ const App: React.FC = () => {
                       angle={-45}
                       textAnchor="end"
                       height={80}
+                      label={{ value: 'Models', position: 'insideBottom', offset: -15 }}
                     />
                     <YAxis 
                       domain={[0, 100]}
                       tick={{ fontSize: 12 }}
-                      label={{ value: 'Confidence (%)', angle: -90, position: 'insideLeft' }}
+                      label={{ value: 'Confidence (%)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
                     />
                     <Tooltip 
                       formatter={(value) => [`${value}%`, 'Confidence']}
-                      labelFormatter={(label) => `Model: ${label.replace(/_/g, ' ')}`}
+                      labelFormatter={(label) => `Model: ${label}`}
                     />
-                    <Legend />
-                    <Bar dataKey="confidence" name="Confidence">
+                    <Bar dataKey="confidence">
                       {getChartData().map((entry, index) => (
                         <Cell 
                           key={`cell-${index}`} 
-                          fill={entry.prediction === "Real" ? "#10B981" : "#EF4444"} 
+                          fill={entry.prediction === "Real" ? "#10B981" : "#F87171"} 
                         />
                       ))}
                     </Bar>
@@ -378,7 +371,7 @@ const App: React.FC = () => {
                   {compareResult.results.map((result, index) => (
                     <tr key={result.model} className={index % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}>
                       <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {result.model.replace(/_/g, " ")}
+                        {formatModelName(result.model)}
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
@@ -407,8 +400,8 @@ const App: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
                         {result.model === "BioBERT" && "Base BioBERT model"}
-                        {result.model === "BioBERT_ARG" && "BioBERT + Argument Mining"}
-                        {result.model === "BioBERT_ARG_GNN" && "BioBERT + Arguments + Graph Neural Network"}
+                        {result.model === "BioBERT_ARG" && "BioBERT + Adaptive Rationale Guidance"}
+                        {result.model === "BioBERT_ARG_GNN" && "BioBERT + Adaptive Rationale Guidance + Graph Neural Networks"}
                       </td>
                     </tr>
                   ))}
@@ -419,36 +412,38 @@ const App: React.FC = () => {
         )}
 
         {/* Model Information */}
-  <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-semibold text-gray-800 dark:text-indigo-100 mb-4">🧠 About the Models</h2>
+  <div className="bg-gray-800 rounded-xl shadow-lg p-6">
+          <h2 className="text-2xl font-semibold text-indigo-100 mb-4">🧠 About the Models</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-              <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">BioBERT</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+            <div className="p-4 border border-gray-600 rounded-lg bg-gray-700">
+              <h3 className="font-semibold text-blue-300 mb-2">BioBERT</h3>
+              <p className="text-sm text-gray-300">
                 Base biomedical language model trained on PubMed abstracts and full-text papers.
                 Specializes in understanding medical and health-related terminology.
               </p>
             </div>
-            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-              <h3 className="font-semibold text-green-600 dark:text-green-300 mb-2">BioBERT + ARG</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Enhanced with argument mining capabilities to identify and weigh important 
-                argumentative elements in health claims for better reasoning.
+            <div className="p-4 border border-gray-600 rounded-lg bg-gray-700">
+              <h3 className="font-semibold text-green-300 mb-2">BioBERT + ARG</h3>
+              <p className="text-sm text-gray-300 mb-2">
+                Enhanced with <strong>Adaptive Rationale Guidance (ARG)</strong> - argument mining capabilities 
+                to identify and weigh important argumentative elements in health claims for better reasoning.
               </p>
+              <p className="text-xs text-gray-400">ARG = Adaptive Rationale Guidance</p>
             </div>
-            <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-              <h3 className="font-semibold text-purple-600 dark:text-purple-300 mb-2">BioBERT + ARG + GNN</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Most advanced model combining BioBERT, argument mining, and graph neural networks
-                to understand relationships between concepts in medical claims.
+            <div className="p-4 border border-gray-600 rounded-lg bg-gray-700">
+              <h3 className="font-semibold text-purple-300 mb-2">BioBERT + ARG + GNN</h3>
+              <p className="text-sm text-gray-300 mb-2">
+                Most advanced model combining BioBERT, Adaptive Rationale Guidance, and Graph Neural Networks (GNN)
+                to understand complex relationships between concepts in medical claims.
               </p>
+              <p className="text-xs text-gray-400">ARG = Adaptive Rationale Guidance | GNN = Graph Neural Networks</p>
             </div>
           </div>
         </div>
       </div>
       {/* Footer */}
-      <footer className="mt-12 py-6 text-center text-gray-500 dark:text-gray-400 text-sm border-t border-gray-200 dark:border-gray-800">
-        <span>© {new Date().getFullYear()} Health Misinfo Detector. Built with React, Tailwind CSS, and FastAPI. | <a href="https://github.com/JyothikaGolla/Health-MisInformation-Detector" className="underline hover:text-indigo-600 dark:hover:text-indigo-300">GitHub</a></span>
+      <footer className="mt-12 py-6 text-center text-gray-400 text-sm border-t border-gray-800">
+        <span>© {new Date().getFullYear()} Health Misinfo Detector. Built with React, Tailwind CSS, and FastAPI. | <a href="https://github.com/JyothikaGolla/Health-MisInformation-Detector" className="underline hover:text-indigo-300">GitHub</a></span>
       </footer>
     </div>
   );
