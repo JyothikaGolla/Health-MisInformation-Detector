@@ -4,32 +4,30 @@ const isDevelopment =
   window.location.hostname === '127.0.0.1' ||
   window.location.hostname.includes('localhost');
 
-const isGitHubPages = window.location.hostname.includes('github.io');
+const isCodespace = window.location.hostname.includes('.app.github.dev');
 
 // Environment-based API URL selection
 const getApiBaseUrl = (): string => {
   if (isDevelopment) {
     // Local development - try different ports if needed
     return 'http://127.0.0.1:8000';
+  } else if (isCodespace) {
+    // GitHub Codespace - dynamically construct backend URL
+    const hostname = window.location.hostname;
+    const backendUrl = hostname.replace(/(-\d+)\.app\.github\.dev$/, '-8000.app.github.dev');
+    return `https://${backendUrl}`;
   } else {
-    // Production deployment - GitHub Codespace URL
+    // Fallback for other deployments
     return 'https://literate-garbanzo-x6696pjwjp53995v-8000.app.github.dev';
   }
 };
 
 export const API_BASE_URL = getApiBaseUrl();
 
-// Debug logging (only in development)
-if (isDevelopment) {
-  console.log('🔧 API Configuration:', {
-    environment: 'development',
-    apiUrl: API_BASE_URL,
-    hostname: window.location.hostname
-  });
-} else {
-  console.log('🚀 API Configuration:', {
-    environment: 'production', 
-    apiUrl: API_BASE_URL,
-    hostname: window.location.hostname
-  });
-}
+// Debug logging for troubleshooting
+console.log('🔧 API Configuration:', {
+  hostname: window.location.hostname,
+  isCodespace: window.location.hostname.includes('.app.github.dev'),
+  isDevelopment: isDevelopment,
+  apiUrl: API_BASE_URL
+});
