@@ -20,9 +20,9 @@ This report presents a comprehensive analysis of the Health Misinformation Detec
 
 | Model | Accuracy | Precision | Recall | F1-Score |
 |-------|----------|-----------|--------|----------|
-| BioBERT | 0.735 | 0.711 | 0.815 | 0.760 |
-| BioBERT_ARG | 0.732 | 0.736 | 0.745 | 0.741 |
-| BioBERT_ARG_GNN | 0.729 | 0.713 | 0.790 | 0.749 |
+| BioBERT | 0.797 | 0.799 | 0.828 | 0.813 |
+| BioBERT_ARG | 0.768 | 0.774 | 0.798 | 0.785 |
+| BioBERT_ARG_GNN | 0.748 | 0.765 | 0.761 | 0.763 |
 
 ## Key Findings
 

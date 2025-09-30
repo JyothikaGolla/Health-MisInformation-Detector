@@ -336,3 +336,5 @@ def predict(req: InferenceRequest):
                 "rationales": rationale_scores.cpu().tolist(),
                 "model_used": req.model_name
             }
+# To run the app, use the command:
+# uvicorn api.main:app --host 0.0.0.0 --port 8000

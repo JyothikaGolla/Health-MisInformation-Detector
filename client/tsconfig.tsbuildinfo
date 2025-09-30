@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/components/claimform.tsx","./src/components/propgraph.tsx","./src/components/rationalecard.tsx","./src/components/scorebadge.tsx","./src/lib/ui.ts"],"version":"5.9.2"}
+{"root":["./src/app.tsx","./src/main.tsx","./src/components/claimform.tsx","./src/components/propgraph.tsx","./src/components/rationalecard.tsx","./src/components/scorebadge.tsx","./src/config/api.ts","./src/lib/ui.ts","./src/types/api.ts"],"version":"5.9.2"}
