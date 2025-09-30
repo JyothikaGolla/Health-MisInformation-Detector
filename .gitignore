@@ -48,6 +48,11 @@ yarn-error.log*
 package-lock.json
 .pnpm-debug.log*
 
+# TypeScript build artifacts - prevent JS versions of TS files
+client/src/config/api.js
+*.tsbuildinfo
+client/dist/
+
 # System files
 .DS_Store
 Thumbs.db
