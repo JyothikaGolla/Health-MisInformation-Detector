@@ -12,8 +12,8 @@ const getApiBaseUrl = (): string => {
     // Local development - try different ports if needed
     return 'http://127.0.0.1:8000';
   } else {
-    // Production deployment (GitHub Pages, Netlify, etc.)
-    return 'https://health-misinformation-detector-1.onrender.com'; // Update with your actual Render URL
+    // Production deployment - GitHub Codespace URL
+    return 'https://literate-garbanzo-x6696pjwjp53995v-8000.app.github.dev';
   }
 };
 
