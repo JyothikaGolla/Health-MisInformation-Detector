@@ -35,9 +35,16 @@ const App = () => {
         setCompareResult(null);
         try {
             console.log("Making request to backend..."); // Debug log
+            console.log("API URL:", `${API_BASE_URL}/predict`); // Debug log
+            console.log("Request payload:", { text: claim, model_name: analyzeModel }); // Debug log
             const response = await axios.post(`${API_BASE_URL}/predict`, {
                 text: claim,
                 model_name: analyzeModel,
+            }, {
+                timeout: 30000, // 30 second timeout
+                headers: {
+                    'Content-Type': 'application/json',
+                }
             });
             console.log("API Response received:", response.data); // Debug log
             console.log("Response status:", response.status); // Debug log
@@ -78,6 +85,11 @@ const App = () => {
                 const response = await axios.post(`${API_BASE_URL}/predict`, {
                     text: claim,
                     model_name: model,
+                }, {
+                    timeout: 30000, // 30 second timeout
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
                 });
                 return {
                     model,
