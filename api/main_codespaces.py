@@ -107,19 +107,27 @@ async def load_models():
 
         # Load BioBERT
         logger.info("🧠 Loading BioBERT model from saved_models/BioBERT/best_model.pt ...")
-        biobert_model = torch.load("saved_models/BioBERT/best_model.pt", map_location=device)
+        biobert_model = BioBERTClassifier(model_name="dmis-lab/biobert-base-cased-v1.1")
+        biobert_model.load_state_dict(torch.load("saved_models/BioBERT/best_model.pt", map_location=device))
+        biobert_model.to(device)
         biobert_model.eval()
         models["BioBERT"] = biobert_model
 
         # Load BioBERT_ARG
         logger.info("🧠 Loading BioBERT_ARG model from saved_models/BioBERT_ARG/best_model.pt ...")
-        biobert_arg_model = torch.load("saved_models/BioBERT_ARG/best_model.pt", map_location=device)
+        from api.main import BioBERT_ARG
+        biobert_arg_model = BioBERT_ARG(model_name="dmis-lab/biobert-base-cased-v1.1")
+        biobert_arg_model.load_state_dict(torch.load("saved_models/BioBERT_ARG/best_model.pt", map_location=device))
+        biobert_arg_model.to(device)
         biobert_arg_model.eval()
         models["BioBERT_ARG"] = biobert_arg_model
 
         # Load BioBERT_ARG_GNN
         logger.info("🧠 Loading BioBERT_ARG_GNN model from saved_models/BioBERT_ARG_GNN/best_model.pt ...")
-        biobert_arg_gnn_model = torch.load("saved_models/BioBERT_ARG_GNN/best_model.pt", map_location=device)
+        from api.main import BioBERT_ARG_GNN
+        biobert_arg_gnn_model = BioBERT_ARG_GNN(model_name="dmis-lab/biobert-base-cased-v1.1")
+        biobert_arg_gnn_model.load_state_dict(torch.load("saved_models/BioBERT_ARG_GNN/best_model.pt", map_location=device))
+        biobert_arg_gnn_model.to(device)
         biobert_arg_gnn_model.eval()
         models["BioBERT_ARG_GNN"] = biobert_arg_gnn_model
 
@@ -127,7 +135,7 @@ async def load_models():
         logger.info(f"📊 Available models: {list(models.keys())}")
     except Exception as e:
         logger.error(f"❌ Error loading models: {str(e)}")
-        raise e
+        raise
 
 @app.get("/")
 def root():
