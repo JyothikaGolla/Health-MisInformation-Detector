@@ -95,33 +95,36 @@ class PredictionResponse(BaseModel):
 
 @app.on_event("startup")
 async def load_models():
-    """Load models from HuggingFace Hub instead of local files."""
+    """Load models from local saved_models directory."""
     global tokenizer, models
-    
-    logger.info("🚀 Starting model loading from HuggingFace...")
+    logger.info("🚀 Starting model loading from local saved_models directory...")
     logger.info(f"📱 Device: {device}")
     logger.info(f"💾 CUDA available: {torch.cuda.is_available()}")
-    
     try:
-        # Load tokenizer
+        # Load tokenizer (from HuggingFace, or you can load from local if available)
         logger.info("📝 Loading tokenizer...")
         tokenizer = AutoTokenizer.from_pretrained("dmis-lab/biobert-base-cased-v1.1", use_fast=True)
-        
-        # Load base BioBERT model
-        logger.info("🧠 Loading BioBERT model...")
-        biobert_model = BioBERTClassifier(model_name="dmis-lab/biobert-base-cased-v1.1")
-        biobert_model.to(device)
+
+        # Load BioBERT
+        logger.info("🧠 Loading BioBERT model from saved_models/BioBERT/best_model.pt ...")
+        biobert_model = torch.load("saved_models/BioBERT/best_model.pt", map_location=device)
         biobert_model.eval()
-        
-        # For Codespaces demo, use same model for all variants
-        # In production, you'd load your fine-tuned models here
         models["BioBERT"] = biobert_model
-        models["BioBERT_ARG"] = biobert_model  # Placeholder - you can add different models later
-        models["BioBERT_ARG_GNN"] = biobert_model  # Placeholder - you can add different models later
-        
+
+        # Load BioBERT_ARG
+        logger.info("🧠 Loading BioBERT_ARG model from saved_models/BioBERT_ARG/best_model.pt ...")
+        biobert_arg_model = torch.load("saved_models/BioBERT_ARG/best_model.pt", map_location=device)
+        biobert_arg_model.eval()
+        models["BioBERT_ARG"] = biobert_arg_model
+
+        # Load BioBERT_ARG_GNN
+        logger.info("🧠 Loading BioBERT_ARG_GNN model from saved_models/BioBERT_ARG_GNN/best_model.pt ...")
+        biobert_arg_gnn_model = torch.load("saved_models/BioBERT_ARG_GNN/best_model.pt", map_location=device)
+        biobert_arg_gnn_model.eval()
+        models["BioBERT_ARG_GNN"] = biobert_arg_gnn_model
+
         logger.info(f"✅ Successfully loaded {len(models)} models!")
         logger.info(f"📊 Available models: {list(models.keys())}")
-        
     except Exception as e:
         logger.error(f"❌ Error loading models: {str(e)}")
         raise e
