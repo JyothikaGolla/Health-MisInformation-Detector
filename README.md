@@ -16,14 +16,14 @@
 
 ## 🎯 Overview
 
-The Health Misinformation Detector is a cutting-edge machine learning system that combines **BioBERT**, **Argument Mining**, and **Graph Neural Networks** to identify misinformation in health-related claims with exceptional accuracy and interpretability. Built with a modern web interface and robust API, it serves both researchers and end-users in the fight against health misinformation.
+The Health Misinformation Detector is a cutting-edge machine learning system that combines **BioBERT**, **Adaptive Rationale Guidance (ARG)**, and **Graph Neural Networks** to identify misinformation in health-related claims with exceptional accuracy and interpretability. Built with a modern web interface and robust API, it serves both researchers and end-users in the fight against health misinformation.
 
 ### 🌟 Key Highlights
 
 - **🏆 79.7% Accuracy** on health misinformation detection
 - **🧠 Multi-Modal AI** combining BERT, ARG, and GNN architectures  
 - **⚡ Real-time Analysis** with interactive web interface
-- **🔍 Argument Mining** for explainable AI results
+- **🔍 Adaptive Rationale Guidance** for explainable AI results
 - **📊 Research Dashboard** with comprehensive analytics
 - **🌐 Production Ready** with Docker deployment support
 
@@ -224,7 +224,7 @@ The system achieves state-of-the-art performance:
 
 - **🎯 Accuracy**: Up to 79.7% on health misinformation detection
 - **⚡ Speed**: < 2 seconds average response time
-- **🔍 Explainability**: Argument mining provides reasoning
+- **🔍 Explainability**: Adaptive Rationale Guidance provides reasoning
 - **📊 Robustness**: Tested across diverse health domains
 
 ---
@@ -246,7 +246,7 @@ health-misinfo-detector/
 │   └── package.json            # Node.js dependencies
 ├── 🧠 pipeline/                # ML Processing Pipeline
 │   ├── bert.py                 # BioBERT utilities
-│   ├── arg.py                  # Argument mining
+│   ├── arg.py                  # Adaptive Rationale Guidance
 │   ├── gnn.py                  # Graph neural networks
 │   └── fuse.py                 # Model fusion logic
 ├── 💾 saved_models/            # Trained model weights
