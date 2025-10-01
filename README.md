@@ -10,8 +10,6 @@
 
 *A sophisticated AI-powered system for detecting and analyzing health-related misinformation using advanced NLP techniques*
 
-[🚀 Quick Start](#-quick-start) • [📊 Demo](https://jyothikagolla.github.io/Health-MisInformation-Detector/) • [📚 Documentation](#-api-documentation) • [🔬 Research](#-research-insights)
-
 </div>
 
 ---
