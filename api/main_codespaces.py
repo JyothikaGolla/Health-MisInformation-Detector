@@ -56,6 +56,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
+
 # Configure CORS for frontend access - Allow all for Codespace development
 app.add_middleware(
     CORSMiddleware,
@@ -64,6 +65,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Custom middleware to force CORS headers for all responses
+@app.middleware("http")
+async def add_cors_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
 
 # Add explicit OPTIONS handler for preflight requests
 @app.options("/predict")
