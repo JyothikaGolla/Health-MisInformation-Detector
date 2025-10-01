@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModel
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import spacy
@@ -64,6 +64,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add explicit OPTIONS handler for preflight requests
+@app.options("/predict")
+async def predict_options():
+    return {"message": "OK"}
+
+@app.options("/{path:path}")
+async def catch_all_options():
+    return {"message": "OK"}
 
 # Global variables
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -145,8 +154,13 @@ def health_check():
     }
 
 @app.post("/predict", response_model=PredictionResponse)
-async def predict(request: PredictionRequest):
+async def predict(request: PredictionRequest, response: Response):
     """Make prediction on health claim."""
+    # Add CORS headers manually as backup
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    
     if not models:
         raise HTTPException(status_code=503, detail="Models not loaded yet. Please wait for startup to complete.")
     
