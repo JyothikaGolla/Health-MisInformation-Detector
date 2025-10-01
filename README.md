@@ -374,27 +374,6 @@ git push origin feature/amazing-feature
 
 ---
 
-## 📖 Additional Resources
-
-### 📚 Research References
-
-- [BioBERT: Pre-trained Biomedical Language Model](https://arxiv.org/abs/1901.08746)
-- [Argument Mining for Fake News Detection](https://aclanthology.org/)
-- [Graph Neural Networks for NLP](https://arxiv.org/abs/1906.02342)
-
-### 🎓 Academic Usage
-
-```bibtex
-@misc{health-misinfo-detector-2024,
-  title={Health Misinformation Detector: AI-Powered Analysis System},
-  author={Golla, Jyothika},
-  year={2024},
-  publisher={GitHub},
-  url={https://github.com/JyothikaGolla/Health-MisInformation-Detector}
-}
-```
----
-
 <div align="center">
 
 ### 🏥 Fighting Health Misinformation with AI 🤖
