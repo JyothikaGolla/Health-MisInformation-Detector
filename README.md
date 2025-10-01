@@ -2,7 +2,6 @@
 
 <div align="center">
 
-![Health Misinformation Detector](https://img.shields.io/badge/Health-Misinformation%20Detector-blue?style=for-the-badge&logo=medical-cross)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat&logo=python)](https://python.org)
 [![React](https://img.shields.io/badge/React-18.2+-blue?style=flat&logo=react)](https://reactjs.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
@@ -394,22 +393,6 @@ git push origin feature/amazing-feature
   url={https://github.com/JyothikaGolla/Health-MisInformation-Detector}
 }
 ```
-
----
-
-## 📞 Support & Community
-
-- 🐛 **Bug Reports**: [Create Issue](https://github.com/JyothikaGolla/Health-MisInformation-Detector/issues)
-- 💬 **Questions**: [GitHub Discussions](https://github.com/JyothikaGolla/Health-MisInformation-Detector/discussions)
-- 📧 **Contact**: [jyothikagolla@example.com](mailto:jyothikagolla@example.com)
-- 🌟 **Star us** on GitHub if this project helps you!
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
 ---
 
 <div align="center">
