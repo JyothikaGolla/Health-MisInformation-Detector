@@ -40,9 +40,17 @@ const App: React.FC = () => {
     
     try {
       console.log("Making request to backend..."); // Debug log
+      console.log("API URL:", `${API_BASE_URL}/predict`); // Debug log
+      console.log("Request payload:", { text: claim, model_name: analyzeModel }); // Debug log
+      
       const response = await axios.post<PredictionResult>(`${API_BASE_URL}/predict`, {
         text: claim,
         model_name: analyzeModel,
+      }, {
+        timeout: 30000, // 30 second timeout
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
       
       console.log("API Response received:", response.data); // Debug log
@@ -86,6 +94,11 @@ const App: React.FC = () => {
         const response = await axios.post<PredictionResult>(`${API_BASE_URL}/predict`, {
           text: claim,
           model_name: model,
+        }, {
+          timeout: 30000, // 30 second timeout
+          headers: {
+            'Content-Type': 'application/json',
+          }
         });
         
         return {
