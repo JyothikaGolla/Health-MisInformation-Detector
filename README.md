@@ -6,7 +6,6 @@
 [![React](https://img.shields.io/badge/React-18.2+-blue?style=flat&logo=react)](https://reactjs.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4+-blue?style=flat&logo=typescript)](https://typescriptlang.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *A sophisticated AI-powered system for detecting and analyzing health-related misinformation using advanced NLP techniques*
 
