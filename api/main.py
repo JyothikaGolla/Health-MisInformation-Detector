@@ -4,9 +4,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModel
-from fastapi import FastAPI
+from fastapi import FastAPI # a python framework to build rest apis
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel # 
 import spacy
 
 # PyG imports for GNN
@@ -143,25 +143,30 @@ class BioBERT_ARG_GNN(nn.Module):
 # -------------------------------
 def build_graph_from_spacy(doc, adj_window=2, add_dep_edges=True, add_ent_edges=True):
     edges = []
+    
     if add_dep_edges:
         for tok in doc:
             if tok.i != tok.head.i:
                 edges.extend([[tok.i, tok.head.i], [tok.head.i, tok.i]])
+                
     for i in range(len(doc)):
         for j in range(1, adj_window + 1):
             if i + j < len(doc):
                 edges.extend([[i, i + j], [i + j, i]])
+                
     if add_ent_edges:
         for ent in doc.ents:
             for t1 in range(ent.start, ent.end):
                 for t2 in range(ent.start, ent.end):
                     if t1 != t2:
                         edges.append([t1, t2])
+                        
     if len(edges) == 0:
         return torch.empty((2, 0), dtype=torch.long)
+        
     return torch.tensor(edges, dtype=torch.long).t().contiguous()
 
-
+# preprocess any input text before it’s sent to the model
 def preprocess_text_for_inference(text, tokenizer, max_len=128):
     enc = tokenizer(
         text,
@@ -292,7 +297,7 @@ def predict(req: InferenceRequest):
 
     with torch.no_grad():
         if req.model_name == "BioBERT":
-            logits = model(input_ids, attention_mask)
+            logits = model(input_ids, attention_mask) # logits are the raw, unnormalized outputs of the model
             probs = torch.softmax(logits, dim=1).cpu().tolist()
             prediction = int(torch.argmax(logits, dim=1).item())
             confidence = float(max(probs[0]))
