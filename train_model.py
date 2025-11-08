@@ -49,20 +49,31 @@ class HealthDataset(Dataset):
 
     def build_graph_from_spacy(self, doc):
         edges = []
+
+        # add syntactic dependency edges
         if self.add_dep_edges:
             for tok in doc:
+                # tok.i -> the index of the token
+                # tok.head.i -> the index of the token’s syntactic head (its grammatical parent)
                 if tok.i != tok.head.i:
                     edges.extend([[tok.i, tok.head.i], [tok.head.i, tok.i]])
+
+        # add proximity edges 
+        # connects neighboring tokens within a small window
         for i in range(len(doc)):
             for j in range(1, self.adj_window + 1):
                 if i + j < len(doc):
                     edges.extend([[i, i + j], [i + j, i]])
+
+        # add entity (semantic) edges
         if self.add_ent_edges:
-            for ent in doc.ents:
+            for ent in doc.ents: # doc.ents - gives a list of named entities like World Health Organization, Covid-19 etc
                 for t1 in range(ent.start, ent.end):
                     for t2 in range(ent.start, ent.end):
                         if t1 != t2:
                             edges.append([t1, t2])
+
+        # handling empty edges
         if len(edges) == 0:
             return torch.empty((2, 0), dtype=torch.long)
         return torch.tensor(edges, dtype=torch.long).t().contiguous()
@@ -118,7 +129,7 @@ class HealthDataset(Dataset):
 
 def collate_fn(batch):
     collated = {
-        "input_ids": torch.stack([b["input_ids"] for b in batch]),
+        "input_ids": torch.stack([b["input_ids"] for b in batch]), # torch.stack() turns a list of tensors (each [seq_len]) into one [batch_size, seq_len] tensor
         "attention_mask": torch.stack([b["attention_mask"] for b in batch]),
         "labels": torch.stack([b["labels"] for b in batch]),
         "edge_index": [b["edge_index"].to(torch.long) for b in batch],
