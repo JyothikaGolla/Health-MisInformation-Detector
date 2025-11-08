@@ -1,15 +1,23 @@
 # train_model.py
 import os
 import argparse
-import numpy as np
-import pandas as pd
-from tqdm import tqdm
-import torch
-import torch.nn as nn
+import numpy as np # numerical computing library
+import pandas as pd # data manipulation library
+from tqdm import tqdm # displays progress bar during processing
+import torch # for DL computations
+import torch.nn as nn # for creating custom layers, models, architectures
 import torch.nn.functional as F
+
+# Dataset - loads your samples
+# DataLoader - batches and shuffles them efficiently during training
 from torch.utils.data import Dataset, DataLoader
+
+# AutoTokenizer - creates tokens and IDs
+# AutoModel - loads pre-trained models
 from transformers import AutoTokenizer, AutoModel, get_linear_schedule_with_warmup
 from torch.optim import AdamW
+
+# for performance evaluation 
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 # PyG imports
@@ -18,8 +26,8 @@ try:
 except ImportError:
     raise ImportError("Please install torch-geometric to use GNN features.")
 
-# spaCy for dependency parsing and NER
-import spacy
+# spaCy for dependency parsing and NER (Named Entity Recognition)
+import spacy # parsing and entity recognition
 nlp = spacy.load("en_core_web_sm")
 
 # ---------------- Dataset ----------------
@@ -127,8 +135,9 @@ class BioBERTClassifier(nn.Module):
         self.fc = nn.Linear(self.bert.config.hidden_size, num_labels)
 
     def forward(self, input_ids, attention_mask, **kwargs):
-        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
-        h = outputs.last_hidden_state[:, 0, :]
+        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask) # [batch_size, sequence_length, hidden_size]
+        h = outputs.last_hidden_state[:, 0, :]  # [batch_size, hidden_size]
+
         return self.fc(h)
 
 class BioBERT_ARG(nn.Module):
@@ -304,20 +313,28 @@ def train_and_save_model(model_name, model_cls, train_loader, val_loader, device
 
 # ---------------- Main ----------------
 def main(args):
-    df = pd.read_csv(args.dataset)
-    tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, use_fast=True)
+    df = pd.read_csv(args.dataset) # load the dataset 
+    tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name, use_fast=True) # convert text -> tokens -> numerical IDs that can be fed into BioBERT.
+
+    # data pre-processing
     dataset = HealthDataset(
         df, tokenizer, text_columns=args.text_columns, label_column=args.label_column,
         max_len=args.max_len, use_gnn=args.use_gnn, adj_window=args.adj_window,
         add_dep_edges=args.add_dep_edges, add_ent_edges=args.add_ent_edges
     )
 
-    train_size = int(0.8*len(dataset))
-    val_size = len(dataset) - train_size
-    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
+    # split the dataset - 80% training and 20% testing
+    train_size = int(0.8*len(dataset)) # training set size
+    val_size = len(dataset) - train_size # validation set size
+    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size]) # randomly divides data into 2 sets
+    
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn)
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn)
 
+    # here - shuffle=True -> randomly shuffles the training data order during each epoch
+    # collate_fn -> a custom function that merges multiple samples into a single batch
+
+    # check if GPU (cuda) is available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     models_to_train = [
@@ -346,7 +363,7 @@ if __name__=="__main__":
     parser.add_argument("--gnn_type", type=str, default="gcn", choices=["gcn","gat"])
     parser.add_argument("--gnn_layers", type=int, default=2)
     parser.add_argument("--gnn_hidden", type=int, default=128)
-    parser.add_argument("--fc_hidden", type=int, default=256)
+    parser.add_argument("--fc_hidden", type=int, default=256) # fully connected components - combines all learned features to make the final binary classification
     parser.add_argument("--dropout", type=float, default=0.2)
     parser.add_argument("--num_labels", type=int, default=2)
     parser.add_argument("--output_dir", type=str, default="saved_models")
